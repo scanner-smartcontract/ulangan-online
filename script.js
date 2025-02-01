@@ -1,17 +1,3 @@
-// Firebase Configuration
-const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_AUTH_DOMAIN",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_STORAGE_BUCKET",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID"
-};
-
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-
 // Data soal ulangan
 const questions = {
     tema1: [
@@ -66,22 +52,6 @@ const questions = {
     ]
 };
 
-// Timer
-let timeLeft = 600; // 10 menit dalam detik
-let timerInterval;
-
-function startTimer() {
-    timerInterval = setInterval(() => {
-        timeLeft--;
-        document.getElementById("timer").textContent = `Waktu: ${Math.floor(timeLeft / 60)}:${timeLeft % 60 < 10 ? '0' : ''}${timeLeft % 60}`;
-        if (timeLeft <= 0) {
-            clearInterval(timerInterval);
-            alert("Waktu habis!");
-            calculateScore();
-        }
-    }, 1000);
-}
-
 // Fungsi untuk menampilkan soal
 function showQuiz(quizId, theme) {
     const quizContainer = document.getElementById(quizId);
@@ -105,46 +75,12 @@ function showQuiz(quizId, theme) {
     });
 }
 
-// Fungsi untuk menghitung skor
-function calculateScore() {
-    let score = 0;
-    Object.keys(questions).forEach(theme => {
-        questions[theme].forEach((q, index) => {
-            const selectedAnswer = document.querySelector(`input[name="question${index}"]:checked`);
-            if (selectedAnswer && parseInt(selectedAnswer.value) === q.correctAnswer) {
-                score++;
-            }
-        });
-    });
-    document.getElementById("score").textContent = `Skor Anda: ${score}`;
-}
-
 // Event listener untuk tombol tema
 document.querySelectorAll(".themes button").forEach(button => {
     button.addEventListener("click", () => {
         const theme = button.getAttribute("data-theme");
         showQuiz("quiz-harian", theme);
     });
-});
-
-// Event listener untuk tombol submit
-document.getElementById("submit-btn").addEventListener("click", calculateScore);
-
-// Login dengan Firebase
-document.getElementById("login-form").addEventListener("submit", (e) => {
-    e.preventDefault();
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-
-    auth.signInWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-            document.getElementById("login-section").style.display = "none";
-            document.getElementById("quiz-section").style.display = "block";
-            startTimer();
-        })
-        .catch((error) => {
-            alert("Login gagal: " + error.message);
-        });
 });
 
 // Tampilkan soal UTS dan UAS saat halaman dimuat
